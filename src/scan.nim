@@ -293,10 +293,6 @@ proc lexStr(src: seq[char]): (Token, string) =
 proc symbol(src: seq[char]): (Token, string) =
   case src[ip]
   of '@': return (Token.decorate, "@")
-  of '#':
-    while src[ip] != '\n' and not atEnd(src):
-      inc ip
-    discard
   of '(': return (Token.lparen, "(")
   of ')': return (Token.rparen, ")")
   of '"': return lexStr(src)
@@ -330,8 +326,9 @@ proc symbol(src: seq[char]): (Token, string) =
       return (Token.minus, "-")
   of '/':
     if src[ip + 1] == '/':
-      inc ip
-      return (Token.floordiv, "//")
+      while src[ip] != '\n' and not atEnd(src):
+        inc ip
+      discard
     else:
       return (Token.fslash, "/")
   of '*': return (Token.star, "*")
@@ -355,6 +352,9 @@ proc symbol(src: seq[char]): (Token, string) =
     if src[ip + 1] == '=':
       inc ip
       return (Token.gteq, ">=")
+    elif src[ip + 1] == '/':
+      inc ip
+      return (Token.floordiv, ">/")
     else:
       return (Token.gt, ">")
   of '&':

@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.7.1"
+version       = "0.7.2"
 author        = "Jordan"
 description   = "The Nosonos programming language."
 license       = "MIT"
