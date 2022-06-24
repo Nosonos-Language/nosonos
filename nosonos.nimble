@@ -3,7 +3,7 @@
 version       = "0.7.2"
 author        = "Jordan"
 description   = "The Nosonos programming language."
-license       = "MIT"
+license       = "MPL-2.0"
 srcDir        = "src"
 bin           = @["nosonos"]
 
