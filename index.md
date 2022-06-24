@@ -129,7 +129,7 @@ fun div() :: Float =
 fun fdiv() :: Int =
   a: Int = Int(input("[a]> "))
   b: Int = Int(input("[b]> "))
-  ret a // b
+  ret a >/ b
 
 fun mod() :: Int =
   a: Int = Int(input("[a]> "))
