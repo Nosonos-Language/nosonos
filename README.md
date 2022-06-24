@@ -4,7 +4,7 @@ Welcome to **Nosonos**!
 
 The current version of Nosonos is `0.7.1`, a minor release that fixes some issues.
 
-**WARNING: UDIN IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
+**WARNING: NOSONOS IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
 
 **LAST WINDOWS CHECK: VER 0.7.0**
 
