@@ -1,8 +1,6 @@
-<img src="https://github.com/vatsjijj/Udin/blob/main/udin.png?raw=true" width="25%" height="25%">
+The Nosonos programming language is a language that compiles down to Python, for easy use with other Python libraries and such.
 
-The Udin programming language is a language that compiles down to Python, for easy use with other Python libraries and such.
-
-Udin's syntax is inspired by [Kotlin](https://kotlinlang.org), [Rust](https://www.rust-lang.org), [Nim](https://nim-lang.org), and [Prowl](https://github.com/UberPyro/prowl).
+Nosonos' syntax is inspired by [Kotlin](https://kotlinlang.org), [Rust](https://www.rust-lang.org), [Nim](https://nim-lang.org), and [Prowl](https://github.com/UberPyro/prowl).
 
 The current version is 0.7.1.
 
@@ -14,9 +12,9 @@ Windows support is highly experimental and may constantly break, proceed with ca
 Linux binaries are built and tested on Fedora 36, and Windows binaries are built and tested on Windows 10.
 
 ## Fun Stuff
-The longest lived series of Udin were 0.1.x and 0.4.x, both going up to 0.1.5 and 0.4.5. Just a little fun fact.
+The longest lived series of Nosonos were 0.1.x and 0.4.x, both going up to 0.1.5 and 0.4.5. Just a little fun fact.
 
-The longest lived bug in Udin was a compilation/scan bug, where nothing would work if you weren't in the same directory as your sources. Started in 0.1.0 and finally ended in 0.6.0. That's 23 releases until it was fixed.
+The longest lived bug in Nosonos was a compilation/scan bug, where nothing would work if you weren't in the same directory as your sources. Started in 0.1.0 and finally ended in 0.6.0. That's 23 releases until it was fixed.
 
 ## Code Samples
 Hello World:
@@ -139,7 +137,7 @@ fun mod() :: Int =
   ret a % b
 
 fun main() :: None =
-  put("Availible operators:")
+  put("Available operators:")
   put("add")
   put("sub")
   put("mul")
@@ -156,7 +154,7 @@ fun main() :: None =
       "fdiv" -> put(fdiv())
       "mod" -> put(mod())
       "ops" ->
-        put("Availible operators:")
+        put("Available operators:")
         put("add")
         put("sub")
         put("mul")
@@ -209,11 +207,11 @@ global x = "awesome"
 fun test() =
   x = "fantastic"
 
-put("Udin is " <> x)
+put("Nosonos is " <> x)
 
 test()
 
-put("Udin is " <> x)
+put("Nosonos is " <> x)
 ```
 
 Double Dot:
