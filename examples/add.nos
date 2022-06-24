@@ -1,0 +1,4 @@
+fun addTwo(a, b) =
+  ret a + b
+
+put(addTwo(7, 10))
