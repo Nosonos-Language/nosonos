@@ -2,7 +2,7 @@
 
 Welcome to **Nosonos**!
 
-The current version of Nosonos is `0.7.1`, a minor release that fixes some issues.
+The current version of Nosonos is `0.7.2`, a minor release that changes the floordiv operator.
 
 **WARNING: NOSONOS IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
 
