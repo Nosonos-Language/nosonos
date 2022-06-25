@@ -63,6 +63,7 @@ type
     cor,
     cnot,
     # keywords
+    kas,
     global,
     dataclass,
     enm,
@@ -216,6 +217,7 @@ proc keyword(word: string): (Token, string) =
   of "None": return (Token.none, tok)
   of "Any": return (Token.pany, tok)
   of "ignoreType": return (Token.ignoretype, tok)
+  of "as": return (Token.kas, tok)
   of "dataclass":
     isDClass = true
     return (Token.dataclass, tok)
@@ -411,6 +413,7 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
   isEnum = false
   for i in 0..len(tbl) - 1:
     case tbl[i][0]
+    of Token.kas: output = output & " as "
     of Token.incr:
       if lookback(tbl, Token.atom, i) and not constTable.contains(tbl[i - 1][1]):
         lhs = tbl[i - 1][1]
