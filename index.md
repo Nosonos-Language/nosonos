@@ -2,7 +2,7 @@ The Nosonos programming language is a language that compiles down to Python, for
 
 Nosonos' syntax is inspired by [Kotlin](https://kotlinlang.org), [Rust](https://www.rust-lang.org), [Nim](https://nim-lang.org), and [Prowl](https://github.com/UberPyro/prowl).
 
-The current version is 0.7.2.
+The current version is 0.7.3.
 
 ## Supported Systems
 Linux and Windows.
@@ -219,4 +219,24 @@ Double Dot:
 test = [0..9]
 
 put(test)
+```
+
+Constants:
+```kotlin
+// Define a constant.
+test := 10
+
+// Print the value of the constant.
+put(test)
+
+// Work with the constant
+x = 7
+put(x + test)
+x = 5
+put(x + test)
+
+// Work with several constants.
+foo := "Hello, "
+bar := "world!"
+put(foo <> bar)
 ```
