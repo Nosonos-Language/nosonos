@@ -1,4 +1,4 @@
-number := 10
+const number = 10
 
 if number == 10 && number > 5:
   put("number is 10 and greater than 5")

@@ -152,28 +152,6 @@ var
     Token.rbrack, Token.lbrack,
     Token.lparen, Token.rparen
   ]
-  keywords: seq[Token] = @[
-    Token.fun, Token.put,
-    Token.ret, Token.cont,
-    Token.loop, Token.imprt,
-    Token.frm, Token.brk,
-    Token.inmain, Token.class,
-    Token.init, Token.mrepr,
-    Token.meq, Token.madd,
-    Token.nothing, Token.isinstance,
-    Token.this, Token.whle,
-    Token.match, Token.cof,
-    Token.cfor, Token.cin,
-    Token.btrue, Token.bfalse,
-    Token.cif, Token.celse,
-    Token.celif, Token.pstring,
-    Token.pinteger, Token.pfloat,
-    Token.pboolean, Token.pbyte,
-    Token.plist, Token.pset,
-    Token.pdict, Token.ptuple,
-    Token.none, Token.pany,
-    Token.ignoretype
-  ]
 
 proc atEnd(src: seq[char]): bool =
   if ip == len(src) - 1:
@@ -251,6 +229,7 @@ proc keyword(word: string): (Token, string) =
   of "or":
     warn("'or' was used instead of '||'.")
     error("Line " & $line & ": Invalid keyword was used.")
+  of "const": return (Token.constant, tok)
   else: return (Token.atom, tok)
 
 proc alpha(src: seq[char]): (Token, string) =
@@ -311,9 +290,6 @@ proc symbol(src: seq[char]): (Token, string) =
     if src[ip + 1] == ':':
       inc ip
       return (Token.dcolon, "::")
-    elif src[ip + 1] == '=':
-      inc ip
-      return (Token.constant, ":=")
     else:
       return (Token.colon, ":")
   of ';': return (Token.semicolon, ";")
@@ -475,22 +451,13 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
         rhs = tbl[i + 1][1]
         output = output & "class " & rhs & "(Enum)"
     of Token.constant:
-      if i != 0:
-        if lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]):
-          error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
-        elif lookback(tbl, Token.atom, i) and varTable.contains(tbl[i - 1][1]):
-          error("Line " & $line & ": Cannot change a normal variable into a constant. Try declaring it as a constant instead.")
-        elif lookback(tbl, Token.atom, i):
-          lhs = tbl[i - 1][1]
-          constTable.add(lhs)
-        elif etypes.contains(tbl[i - 1][0]):
-          error("Line " & $line & ": Constants are not supported with type annotations yet.")
-        else:
-          error("Line " & $line & ": Cannot declare anything other than an atom as a constant.")
-        if not types.contains(tbl[i + 1][0]):
-          error("Line " & $line & ": Declaring a constant requires a valid value on the right hand side.")
-        else:
-          output = output & lhs.toUpperAscii & " = "
+      if lookahead(tbl, Token.atom, i):
+        if constTable.contains(tbl[i + 1][1]):
+          error("Line " & $line & ": Cannot redefine an already defined constant.")
+        constTable.add(tbl[i + 1][1])
+        output = output & tbl[i + 1][1].toUpperAscii
+      else:
+        error("Line " & $line & ": Expected an atom after the constant keyword.")
     of Token.decorate: output = output & "@"
     of Token.ignoretype: output = output & " # type: ignore"
     of Token.pany: output = output & "any"
@@ -671,7 +638,7 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
           continue
         elif lookback(tbl, Token.incr, i) or lookback(tbl, Token.decr, i):
           continue
-        elif lookahead(tbl, Token.constant, i):
+        elif lookback(tbl, Token.constant, i):
           continue
         else:
           if globalTable.contains(tbl[i][1]) and not (parenLevel > 0 or isEnum or listLevel > 0 or isIf or isWhile or isFun):
@@ -776,22 +743,18 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
         isMatch = false
         isFor = false
         isLoop = false
-      elif keywords.contains(tbl[i - 1][0]):
-        if etypes.contains(tbl[i - 1][0]):
-          if not varTable.contains(tbl[i - 3][1]):
-            varTable.add(tbl[i - 3][1])
-          output = output & " = "
-        else:
-          error("Line " & $line & ": '" & tbl[i - 1][1] & "' is a reserved keyword and cannot be assigned to.")
       elif not lookback(tbl, Token.atom, i):
         if etypes.contains(tbl[i - 1][0]):
-          if not varTable.contains(tbl[i - 3][1]):
-            varTable.add(tbl[i - 3][1])
-          output = output & " = "
+          if constTable.contains(tbl[i - 3][1]):
+            error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
+          else:
+            if not varTable.contains(tbl[i - 3][1]):
+              varTable.add(tbl[i - 3][1])
+            output = output & " = "
         else:
           warn("Line " & $line & ": Cannot assign a value to an object of type '" & $tbl[i - 1][0] & "'. Did you mean '=='?")
           error("Line " & $line & ": '" & tbl[i - 1][1] & "' is of type '" & $tbl[i - 1][0] & "' and cannot be assigned to.")
-      elif lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]):
+      elif lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]) and not lookback(tbl, Token.constant, i - 1):
         error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
       elif lookback(tbl, Token.atom, i) and not varTable.contains(tbl[i - 1][1]):
         varTable.add(tbl[i - 1][1])

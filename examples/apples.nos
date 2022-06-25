@@ -1,4 +1,4 @@
-apples := 20
+const apples = 20
 oranges = 15
 
 put("Number of apples: " <> String(apples))
