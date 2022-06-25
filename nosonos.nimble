@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.7.2"
+version       = "0.7.3"
 author        = "Jordan"
 description   = "The Nosonos programming language."
 license       = "MPL-2.0"

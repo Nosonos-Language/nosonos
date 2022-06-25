@@ -9,3 +9,5 @@ nosonos r test.nos
 nosonos r quicksort.nos
 nosonos r dclass.nos
 nosonos r global.nos
+nosonos r fib.nos
+nosonos r const.nos

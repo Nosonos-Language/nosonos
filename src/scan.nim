@@ -47,6 +47,7 @@ type
     lbrack, rbrack,
     decorate,
     # two char tokens
+    constant,
     incr,
     decr,
     dictb,
@@ -128,6 +129,15 @@ var
   toCompile*: seq[string]
   toDel*: seq[string]
   globalTable: seq[string]
+  constTable: seq[string]
+  varTable: seq[string]
+  etypes: seq[Token] = @[
+    Token.pany, Token.pboolean,
+    Token.pbyte, Token.pdict,
+    Token.pfloat, Token.pinteger,
+    Token.plist, Token.pset,
+    Token.pstring, Token.ptuple
+  ]
   types: seq[Token] = @[
     Token.atom, Token.str,
     Token.num, Token.btrue,
@@ -139,7 +149,8 @@ var
     Token.pdict, Token.ptuple,
     Token.none, Token.pany,
     Token.put, Token.newline,
-    Token.rbrack
+    Token.rbrack, Token.lbrack,
+    Token.lparen, Token.rparen
   ]
   keywords: seq[Token] = @[
     Token.fun, Token.put,
@@ -300,6 +311,9 @@ proc symbol(src: seq[char]): (Token, string) =
     if src[ip + 1] == ':':
       inc ip
       return (Token.dcolon, "::")
+    elif src[ip + 1] == '=':
+      inc ip
+      return (Token.constant, ":=")
     else:
       return (Token.colon, ":")
   of ';': return (Token.semicolon, ";")
@@ -328,6 +342,7 @@ proc symbol(src: seq[char]): (Token, string) =
     if src[ip + 1] == '/':
       while src[ip] != '\n' and not atEnd(src):
         inc ip
+      inc line
       discard
     else:
       return (Token.fslash, "/")
@@ -421,21 +436,19 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
   for i in 0..len(tbl) - 1:
     case tbl[i][0]
     of Token.incr:
-      if lookback(tbl, Token.atom, i):
+      if lookback(tbl, Token.atom, i) and not constTable.contains(tbl[i - 1][1]):
         lhs = tbl[i - 1][1]
         output = output & lhs & " += 1"
-      elif lookahead(tbl, Token.atom, i):
-        rhs = tbl[i + 1][1]
-        output = output & rhs & " += 1"
+      elif lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]):
+        error("Line " & $line & ": Cannot increment a constant. Try declaring it as a normal variable instead.")
       else:
         error("Line " & $line & ": Invalid type for increment operator.")
     of Token.decr:
-      if lookback(tbl, Token.atom, i):
+      if lookback(tbl, Token.atom, i) and not constTable.contains(tbl[i - 1][1]):
         lhs = tbl[i - 1][1]
         output = output & lhs & " -= 1"
-      elif lookahead(tbl, Token.atom, i):
-        rhs = tbl[i + 1][1]
-        output = output & rhs & " -= 1"
+      elif lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]):
+        error("Line " & $line & ": Cannot decrement a constant. Try declaring it as a normal variable instead.")
       else:
         error("Line " & $line & ": Invalid type for decrement operator.")
     of Token.global:
@@ -461,6 +474,23 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
           warn("Line " & $line & ": Enums should only be declared in toplevel.")
         rhs = tbl[i + 1][1]
         output = output & "class " & rhs & "(Enum)"
+    of Token.constant:
+      if i != 0:
+        if lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]):
+          error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
+        elif lookback(tbl, Token.atom, i) and varTable.contains(tbl[i - 1][1]):
+          error("Line " & $line & ": Cannot change a normal variable into a constant. Try declaring it as a constant instead.")
+        elif lookback(tbl, Token.atom, i):
+          lhs = tbl[i - 1][1]
+          constTable.add(lhs)
+        elif etypes.contains(tbl[i - 1][0]):
+          error("Line " & $line & ": Constants are not supported with type annotations yet.")
+        else:
+          error("Line " & $line & ": Cannot declare anything other than an atom as a constant.")
+        if not types.contains(tbl[i + 1][0]):
+          error("Line " & $line & ": Declaring a constant requires a valid value on the right hand side.")
+        else:
+          output = output & lhs.toUpperAscii & " = "
     of Token.decorate: output = output & "@"
     of Token.ignoretype: output = output & " # type: ignore"
     of Token.pany: output = output & "any"
@@ -641,13 +671,24 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
           continue
         elif lookback(tbl, Token.incr, i) or lookback(tbl, Token.decr, i):
           continue
+        elif lookahead(tbl, Token.constant, i):
+          continue
         else:
           if globalTable.contains(tbl[i][1]) and not (parenLevel > 0 or isEnum or listLevel > 0 or isIf or isWhile or isFun):
             output = output & "global " & tbl[i][1] & "\n" & repeat(' ', indentLevel) & tbl[i][1]
+          elif constTable.contains(tbl[i][1]):
+            output = output & tbl[i][1].toUpperAscii
           else:
             output = output & tbl[i][1]
       else:
-        output = output & tbl[i][1]
+        if lookahead(tbl, Token.constant, i):
+          continue
+        elif lookahead(tbl, Token.rarrow, i):
+          continue
+        elif lookahead(tbl, Token.incr, i) or lookahead(tbl, Token.decr, i):
+          continue
+        else:
+          output = output & tbl[i][1]
     of Token.num:
       if i != 0:
         if lookahead(tbl, Token.dotdot, i):
@@ -725,7 +766,7 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
     of Token.equ:
       if isFun or isWhile or isIf or isEnum or isDClass or isMatch or isFor or isLoop:
         if isWhile or isIf or isMatch or isFor or isLoop:
-          warn("Line " & $line & ": You should use ':' for while, if, else, elif, for, loop, and match blocks.")
+          error("Line " & $line & ": You should use ':' for while, if, else, elif, for, loop, and match blocks.")
         output = output & ": "
         isFun = false # Aww man.
         isIf = false
@@ -736,16 +777,29 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
         isFor = false
         isLoop = false
       elif keywords.contains(tbl[i - 1][0]):
-        if types.contains(tbl[i - 1][0]):
+        if etypes.contains(tbl[i - 1][0]):
+          if not varTable.contains(tbl[i - 3][1]):
+            varTable.add(tbl[i - 3][1])
           output = output & " = "
         else:
           error("Line " & $line & ": '" & tbl[i - 1][1] & "' is a reserved keyword and cannot be assigned to.")
       elif not lookback(tbl, Token.atom, i):
-        if types.contains(tbl[i - 1][0]):
+        if etypes.contains(tbl[i - 1][0]):
+          if not varTable.contains(tbl[i - 3][1]):
+            varTable.add(tbl[i - 3][1])
           output = output & " = "
         else:
           warn("Line " & $line & ": Cannot assign a value to an object of type '" & $tbl[i - 1][0] & "'. Did you mean '=='?")
           error("Line " & $line & ": '" & tbl[i - 1][1] & "' is of type '" & $tbl[i - 1][0] & "' and cannot be assigned to.")
+      elif lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]):
+        error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
+      elif lookback(tbl, Token.atom, i) and not varTable.contains(tbl[i - 1][1]):
+        varTable.add(tbl[i - 1][1])
+        output = output & " = "
+      elif etypes.contains(tbl[i - 1][0]):
+        if not varTable.contains(tbl[i - 3][1]):
+          varTable.add(tbl[i - 3][1])
+        output = output & " = "
       else:
         output = output & " = "
     of Token.equequ: output = output & " == "

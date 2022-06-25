@@ -17,10 +17,10 @@ fun qs(arr: List) :: List =
     more: List = qs(more)
     ret less + pivotList + more
 
-a: List = [ 4, 65, 2,
+a := [ 4, 65, 2,
       -31, 0, 99,
       83, 782, 1 ]
 
-a: List = qs(a)
+b := qs(a)
 
-put(a)
+put(b)

@@ -4,6 +4,6 @@ dataclass Employee =
   age: Int
   city: String
 
-employeeOne = Employee("Bob", "bobd867", 27, "Columbus")
+employeeOne := Employee("Bob", "bobd867", 27, "Columbus")
 
 put(employeeOne)
