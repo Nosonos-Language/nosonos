@@ -224,7 +224,7 @@ put(test)
 Constants:
 ```kotlin
 // Define a constant.
-test := 10
+const test = 10
 
 // Print the value of the constant.
 put(test)
@@ -236,7 +236,7 @@ x = 5
 put(x + test)
 
 // Work with several constants.
-foo := "Hello, "
-bar := "world!"
+const foo = "Hello, "
+const bar = "world!"
 put(foo <> bar)
 ```
