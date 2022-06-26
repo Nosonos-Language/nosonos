@@ -53,9 +53,9 @@ fun addTwo(a: Int, b: Int) :: Int =
 fun addThree(a: Int, b: Int, c: Int) :: Int =
   ret a + b + c
 
-x: Int = 7
-y: Int = 10
-z: Int = 9
+var x: Int = 7
+var y: Int = 10
+var z: Int = 9
 
 put(addTwo(x, y))
 put(addThree(x, y, z))
@@ -70,20 +70,20 @@ fun m(arg: Int) :: String =
     _ -> ret "none"
 
 loop:
-  uin: Int = Int(input("> "))
+  var uin: Int = Int(input("> "))
   put(m(uin))
 ```
 
 Quicksort:
 ```kotlin
 fun qs(arr: List) :: List =
-  less: List = []
-  pivotList: List = []
-  more: List = []
+  local less: List = []
+  local pivotList: List = []
+  local more: List = []
   if len(arr) <= 1:
     ret arr
   else:
-    pivot = arr[0]
+    local pivot: List = arr[0]
     for i in arr:
       if i < pivot:
         less.append(i)
@@ -91,49 +91,49 @@ fun qs(arr: List) :: List =
         more.append(i)
       else:
         pivotList.append(i)
-    less = qs(less)
-    more = qs(more)
+    less: List = qs(less)
+    more: List = qs(more)
     ret less + pivotList + more
 
-a = [ 4, 65, 2,
+const a: List = [ 4, 65, 2,
       -31, 0, 99,
       83, 782, 1 ]
 
-a = qs(a)
+const b: List = qs(a)
 
-put(a)
+put(b)
 ```
 
 Calculator:
 ```kotlin
 fun add() :: Int =
-  a: Int = Int(input("[a]> "))
-  b: Int = Int(input("[b]> "))
+  local a: Int = Int(input("[a]> "))
+  local b: Int = Int(input("[b]> "))
   ret a + b
 
 fun sub() :: Int =
-  a: Int = Int(input("[a]> "))
-  b: Int = Int(input("[b]> "))
+  local a: Int = Int(input("[a]> "))
+  local b: Int = Int(input("[b]> "))
   ret a - b
 
 fun mul() :: Int =
-  a: Int = Int(input("[a]> "))
-  b: Int = Int(input("[b]> "))
+  local a: Int = Int(input("[a]> "))
+  local b: Int = Int(input("[b]> "))
   ret a * b
 
 fun div() :: Float =
-  a: Float = Float(input("[a]> "))
-  b: Float = Float(input("[b]> "))
+  local a: Float = Float(input("[a]> "))
+  local b: Float = Float(input("[b]> "))
   ret a / b
 
 fun fdiv() :: Int =
-  a: Int = Int(input("[a]> "))
-  b: Int = Int(input("[b]> "))
+  local a: Int = Int(input("[a]> "))
+  local b: Int = Int(input("[b]> "))
   ret a >/ b
 
 fun mod() :: Int =
-  a: Int = Int(input("[a]> "))
-  b: Int = Int(input("[b]> "))
+  local a: Int = Int(input("[a]> "))
+  local b: Int = Int(input("[b]> "))
   ret a % b
 
 fun main() :: None =
@@ -145,7 +145,7 @@ fun main() :: None =
   put("fdiv")
   put("mod")
   loop:
-    uin: String = input("> ")
+    local uin: String = input("> ")
     match uin:
       "add" -> put(add())
       "sub" -> put(sub())
@@ -175,29 +175,25 @@ dataclass Employee =
   age: Int
   city: String
 
-employeeOne = Employee("Bob", "bobd867", 27, "Columbus")
+const employeeOne = Employee("Bob", "bobd867", 27, "Columbus")
 
 put(employeeOne)
 ```
 
 Increment and Decrement:
 ```kotlin
-x = 10
+var x = 10
 put(x)
 x++
 put(x)
-++x
-put(x)
 x--
-put(x)
---x
 put(x)
 
 x = 0
 
 for i in 0..9:
   put(x)
-  ++x
+  x++
 ```
 
 Globals:
@@ -216,27 +212,30 @@ put("Nosonos is " <> x)
 
 Double Dot:
 ```kotlin
-test = [0..9]
+const test = [0..9]
 
 put(test)
 ```
 
 Constants:
 ```kotlin
-// Define a constant.
-const test = 10
+// Dynamic variables and constants.
+var x = 10
+put(x)
+x = 9
+put(x)
+const y = 10
+put(y)
 
-// Print the value of the constant.
-put(test)
+// Typed variables and constants.
+var foo: Int = 7
+put(foo)
+foo: Int = 9
+put(foo)
+const bar: Int = 8
+put(bar)
 
-// Work with the constant
-x = 7
-put(x + test)
-x = 5
-put(x + test)
-
-// Work with several constants.
-const foo = "Hello, "
-const bar = "world!"
-put(foo <> bar)
+const hello: String = "Hello, "
+const world: String = "world!"
+put(hello <> world)
 ```
