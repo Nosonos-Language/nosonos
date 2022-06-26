@@ -63,6 +63,8 @@ type
     cor,
     cnot,
     # keywords
+    local,
+    defvar,
     kas,
     global,
     dataclass,
@@ -170,6 +172,8 @@ proc keyword(word: string): (Token, string) =
   of "Any": return (Token.pany, tok)
   of "ignoreType": return (Token.ignoretype, tok)
   of "as": return (Token.kas, tok)
+  of "var": return (Token.defvar, tok)
+  of "local": return (Token.local, tok)
   of "dataclass":
     isDClass = true
     return (Token.dataclass, tok)

@@ -5,5 +5,5 @@ fun m(arg: Int) :: String =
     _ -> ret "none"
 
 loop:
-  uin: Int = Int(input("> "))
+  var uin: Int = Int(input("> "))
   put(m(uin))

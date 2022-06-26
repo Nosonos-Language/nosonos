@@ -2,7 +2,7 @@
 
 Welcome to **Nosonos**!
 
-The current version of Nosonos is `0.7.3`, a minor release that adds constants and fixes a bug.
+The current version of Nosonos is `0.8.0`, a major release that adds an explicit `var` keyword.
 
 **WARNING: NOSONOS IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
 
@@ -22,6 +22,9 @@ For reference:
 `o` -> output file
 
 Documentation will be written eventually, but for now, check out the example files to learn the language.
+
+## Known Issues
+The error reporting is a bit buggy, and line numbers are only correct half of the time.
 
 ## Things to Do
 Change output language. Candidates are D and Nim.

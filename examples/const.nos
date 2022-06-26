@@ -1,16 +1,25 @@
-// Define a constant.
-const test = 10
+// Dynamic variables and constants.
+var x = 10
+put(x)
+x = 9
+put(x)
+const y = 10
+put(y)
+// The below will trigger an error,
+// uncomment that if you want to see.
+// y = 9
 
-// Print the value of the constant.
-put(test)
+// Typed variables and constants.
+var foo: Int = 7
+put(foo)
+foo: Int = 9
+put(foo)
+const bar: Int = 8
+put(bar)
+// The below will trigger an error,
+// uncomment that if you want to see.
+// bar: Int = 5
 
-// Work with the constant
-x = 7
-put(x + test)
-x = 5
-put(x + test)
-
-// Work with several constants.
-const foo = "Hello, "
-const bar = "world!"
-put(foo <> bar)
+const hello: String = "Hello, "
+const world: String = "world!"
+put(hello <> world)

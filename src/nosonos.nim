@@ -30,7 +30,7 @@ elif detectOs(Windows):
   createDir("C:\\.gen_nosonos")
 
 if paramCount() == 1 and (paramStr(1) == "ver" or commandLineParams()[0] == "ver"):
-  info("Nosonos 0.7.3")
+  info("Nosonos 0.8.0")
   quit(0)
 elif paramCount() >= 2:
   if detectOs(Linux):

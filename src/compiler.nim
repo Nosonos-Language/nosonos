@@ -2,6 +2,7 @@ import std/[strutils, os, distros], util, scan
 
 var
   indentLevel: int = 0
+  prevIndent: int = 0
   listLevel: int = 0
   parenLevel: int = 0
   lhs, rhs: string
@@ -15,6 +16,7 @@ var
   globalTable: seq[string]
   constTable: seq[string]
   varTable: seq[string]
+  localTable: seq[string]
   etypes: seq[Token] = @[
     Token.pany, Token.pboolean,
     Token.pbyte, Token.pdict,
@@ -83,6 +85,7 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
     of Token.global:
       if lookahead(tbl, Token.atom, i):
         globalTable.add(tbl[i + 1][1])
+        varTable.add(tbl[i + 1][1])
       else:
         error("Line " & $line & ": Improper use of the 'global' keyword.")
     of Token.dataclass:
@@ -111,6 +114,29 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
         output = output & tbl[i + 1][1].toUpperAscii
       else:
         error("Line " & $line & ": Expected an atom after the constant keyword.")
+    of Token.local:
+      if lookahead(tbl, Token.atom, i):
+        if constTable.contains(tbl[i + 1][1]):
+          error("Line " & $line & ": Cannot redefine an already defined constant.")
+        elif varTable.contains(tbl[i + 1][1]):
+          error("Line " & $line & ": Cannot convert a normal variable to a local.")
+        localTable.add(tbl[i + 1][1])
+        output = output & tbl[i + 1][1]
+      else:
+        error("Line " & $line & ": Expected an atom after the local keyword.")
+    of Token.defvar:
+      if lookahead(tbl, Token.atom, i):
+        if constTable.contains(tbl[i + 1][1]):
+          error("Line " & $line & ": Cannot redefine a defined constant to a normal variable.")
+        if not varTable.contains(tbl[i + 1][1]):
+          varTable.add(tbl[i + 1][1])
+          output = output & tbl[i + 1][1]
+        elif varTable.contains(tbl[i + 1][1]):
+          error("Line " & $line & ": Variable '" & tbl[i + 1][1] & "' has already been defined.")
+        elif localTable.contains(tbl[i + 1][1]):
+          error("Line " & $line & ": Cannot convert a local into a normal variable.")
+      else:
+        error("Line " & $line & ": Expected an atom after variable keyword.")
     of Token.decorate: output = output & "@"
     of Token.ignoretype: output = output & " # type: ignore"
     of Token.pany: output = output & "any"
@@ -293,6 +319,10 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
           continue
         elif lookback(tbl, Token.constant, i):
           continue
+        elif lookback(tbl, Token.defvar, i):
+          continue
+        elif lookback(tbl, Token.local, i):
+          continue
         else:
           if globalTable.contains(tbl[i][1]) and not (parenLevel > 0 or isEnum or listLevel > 0 or isIf or isWhile or isFun):
             output = output & "global " & tbl[i][1] & "\n" & repeat(' ', indentLevel) & tbl[i][1]
@@ -396,26 +426,26 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
         isMatch = false
         isFor = false
         isLoop = false
-      elif not lookback(tbl, Token.atom, i):
-        if etypes.contains(tbl[i - 1][0]):
-          if constTable.contains(tbl[i - 3][1]):
-            error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
-          else:
-            if not varTable.contains(tbl[i - 3][1]):
-              varTable.add(tbl[i - 3][1])
-            output = output & " = "
-        else:
-          warn("Line " & $line & ": Cannot assign a value to an object of type '" & $tbl[i - 1][0] & "'. Did you mean '=='?")
-          error("Line " & $line & ": '" & tbl[i - 1][1] & "' is of type '" & $tbl[i - 1][0] & "' and cannot be assigned to.")
-      elif lookback(tbl, Token.atom, i) and constTable.contains(tbl[i - 1][1]) and not lookback(tbl, Token.constant, i - 1):
-        error("Line " & $line & ": Cannot change the value of a constant. Try declaring it as a normal variable instead.")
-      elif lookback(tbl, Token.atom, i) and not varTable.contains(tbl[i - 1][1]):
-        varTable.add(tbl[i - 1][1])
-        output = output & " = "
       elif etypes.contains(tbl[i - 1][0]):
-        if not varTable.contains(tbl[i - 3][1]):
-          varTable.add(tbl[i - 3][1])
-        output = output & " = "
+        if not (tbl[i - 3][0] == Token.atom):
+          error("Line " & $line & ": Cannot assign to a value that is not an atom.")
+        elif constTable.contains(tbl[i - 3][1]):
+          if not (tbl[i - 4][0] == Token.constant):
+            error("Line " & $line & ": Cannot redefine a constant.")
+          output = output & " = "
+        elif not varTable.contains(tbl[i - 3][1]) and not localTable.contains(tbl[i - 3][1]):
+          error("Line " & $line & ": Variable '" & tbl[i - 3][1] & "' is undefined.")
+        else:
+          output = output & " = "
+      elif lookback(tbl, Token.atom, i):
+        if constTable.contains(tbl[i - 1][1]):
+          if not (tbl[i - 2][0] == Token.constant):
+            error("Line " & $line & ": Cannot redefine a constant.")
+          output = output & " = "
+        elif not varTable.contains(tbl[i - 1][1]) and not localTable.contains(tbl[i - 1][1]):
+          error("Line " & $line & ": Variable '" & tbl[i - 1][1] & "' is undefined.")
+        else:
+          output = output & " = "
       else:
         output = output & " = "
     of Token.equequ: output = output & " == "
@@ -452,6 +482,7 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
       output = output & " "
       inc indentLevel
     of Token.newline:
+      prevIndent = indentLevel
       indentLevel = 0
       output = output & "\n"
     else: error("Line " & $line & ": '" & $tbl[i] & "' is not defined or is defined elsewhere")
