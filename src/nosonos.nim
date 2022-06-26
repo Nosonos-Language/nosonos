@@ -10,7 +10,7 @@
 #      /:/  /       \::/  /       \::/  /       \::/  /        /:/  /       \::/  /       \::/  /   
 #      \/__/         \/__/         \/__/         \/__/         \/__/         \/__/         \/__/    
 
-import std/[sequtils, os, osproc, strutils, strformat, distros], scan, util
+import std/[sequtils, os, osproc, strutils, strformat, distros], scan, util, compiler
 
 var name: string
 var oldLen: int = 0
