@@ -29,6 +29,7 @@ type
     num,
     str,
     indt,
+    comment,
     # one char tokens
     newline,
     colon,
@@ -276,8 +277,8 @@ proc symbol(src: seq[char]): (Token, string) =
     if src[ip + 1] == '/':
       while src[ip] != '\n' and not atEnd(src):
         inc ip
-      inc line
-      discard
+      # inc line
+      return (Token.comment, "comment")
     else:
       return (Token.fslash, "/")
   of '*': return (Token.star, "*")
@@ -343,7 +344,7 @@ proc scan*(src: seq[char]) =
     elif isSpaceAscii(src[ip]):
       rawTok = @[]
       if src[ip] == '\n':
-        inc line
+        # inc line
         inc ip
         tokenTable.add((newline, "nl"))
         while src[ip] == ' ':

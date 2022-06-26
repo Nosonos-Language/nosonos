@@ -481,7 +481,9 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
     of Token.indt:
       output = output & " "
       inc indentLevel
+    of Token.comment: inc line
     of Token.newline:
+      inc line
       prevIndent = indentLevel
       indentLevel = 0
       output = output & "\n"
