@@ -22,7 +22,8 @@ var
     Token.pbyte, Token.pdict,
     Token.pfloat, Token.pinteger,
     Token.plist, Token.pset,
-    Token.pstring, Token.ptuple
+    Token.pstring, Token.ptuple,
+    Token.none
   ]
   types: seq[Token] = @[
     Token.atom, Token.str,
