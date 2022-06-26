@@ -6,7 +6,7 @@ The current version of Nosonos is `0.8.0`, a major release that adds an explicit
 
 **WARNING: NOSONOS IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
 
-**LAST WINDOWS CHECK: VER 0.7.0**
+**LAST WINDOWS CHECK: VER 0.8.0**
 
 ## Usage
 `nosonos [g, r, c] <filename> [o] <output name>`
