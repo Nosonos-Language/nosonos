@@ -2,7 +2,7 @@ The Nosonos programming language is a language that compiles down to Python, for
 
 Nosonos' syntax is inspired by [Kotlin](https://kotlinlang.org), [Rust](https://www.rust-lang.org), [Nim](https://nim-lang.org), and [Prowl](https://github.com/UberPyro/prowl).
 
-The current version is 0.8.1.
+The current version is 0.8.2.
 
 ## Supported Systems
 Linux and Windows.
