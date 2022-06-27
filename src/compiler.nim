@@ -61,11 +61,17 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
       output = output & "from enum import Enum, auto\n"
     if isDClass:
       output = output & "from dataclasses import dataclass\n"
+    if isOpt:
+      output = output & "from typing import Optional\n"
     output = output & "# End Nosonos import #\n\n"
   isDClass = false
   isEnum = false
   for i in 0..len(tbl) - 1:
     case tbl[i][0]
+    of Token.def: error("Line " & $line & ": 'def' was used instead of 'fun'.")
+    of Token.wand: error("Line " & $line & ": 'and' was used instead of '&&'.")
+    of Token.wor: error("Line " & $line & ": 'or' was used instead of '||'.")
+    of Token.wnot: error("Line " & $line & ": 'not' was used instead of '!'.")
     of Token.kas: output = output & " as "
     of Token.incr:
       if lookback(tbl, Token.atom, i) and not constTable.contains(tbl[i - 1][1]):
@@ -151,6 +157,7 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
     of Token.pinteger: output = output & "int"
     of Token.pfloat: output = output & "float"
     of Token.pboolean: output = output & "bool"
+    of Token.popt: output = output & "Optional"
     of Token.underscore:
       if lookahead(tbl, Token.rarrow, i):
         continue
@@ -435,6 +442,17 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
           output = output & " = "
         elif not varTable.contains(tbl[i - 3][1]) and not localTable.contains(tbl[i - 3][1]):
           error("Line " & $line & ": Variable '" & tbl[i - 3][1] & "' is undefined.")
+        else:
+          output = output & " = "
+      elif tbl[i - 1][0] == Token.lbrack:
+        if not (tbl[i - 8][0] == Token.atom) and not (tbl[i - 7][0] == Token.atom):
+          error("Line " & $line & ": Cannot assign to a value that is not an atom.")
+        elif constTable.contains(tbl[i - 8][1]) or constTable.contains(tbl[i - 7][1]):
+          if not (tbl[i - 9][0] == Token.constant) and not (tbl[i - 8][0] == Token.constant):
+            error("Line " & $line & ": Cannot redefine a constant.")
+          output = output & " = "
+        elif not (varTable.contains(tbl[i - 8][1]) and not localTable.contains(tbl[i - 8][1])) and not (varTable.contains(tbl[i - 7][1]) and not localTable.contains(tbl[i - 7][1])):
+          error("Line " & $line & ": Variable is undefined.")
         else:
           output = output & " = "
       elif lookback(tbl, Token.atom, i):

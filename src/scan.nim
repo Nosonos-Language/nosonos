@@ -70,6 +70,10 @@ type
     global,
     dataclass,
     enm,
+    wor,
+    wand,
+    wnot,
+    def,
     fun,
     put,
     ret,
@@ -106,6 +110,7 @@ type
     pset,
     pdict,
     ptuple,
+    popt,
     none,
     pany,
     ilgl
@@ -118,6 +123,7 @@ var
   line*: int = 1
   isEnum*: bool = false
   isDClass*: bool = false
+  isOpt*: bool = false
   toCompile*: seq[string]
   toDel*: seq[string]
 
@@ -169,6 +175,9 @@ proc keyword(word: string): (Token, string) =
   of "Dict": return (Token.pdict, tok)
   of "Tuple": return (Token.ptuple, tok)
   of "None": return (Token.none, tok)
+  of "Opt":
+    isOpt = true
+    return (Token.popt, tok)
   of "Any": return (Token.pany, tok)
   of "as": return (Token.kas, tok)
   of "var": return (Token.defvar, tok)
@@ -177,15 +186,10 @@ proc keyword(word: string): (Token, string) =
     isDClass = true
     return (Token.dataclass, tok)
   of "global": return (Token.global, tok)
-  of "def":
-    warn("'def' was used instead of 'fun'.")
-    error("Line " & $line & ": Invalid function keyword was used.")
-  of "and":
-    warn("'and' was used instead of '&&'.")
-    error("Line " & $line & ": Invalid keyword was used.")
-  of "or":
-    warn("'or' was used instead of '||'.")
-    error("Line " & $line & ": Invalid keyword was used.")
+  of "def": return (Token.def, tok)
+  of "and": return (Token.wand, tok)
+  of "or": return (Token.wor, tok)
+  of "not": return (Token.wnot, tok)
   of "const": return (Token.constant, tok)
   else: return (Token.atom, tok)
 

@@ -2,7 +2,7 @@
 
 Welcome to **Nosonos**!
 
-The current version of Nosonos is `0.8.1`, a minor release that fixes an error reporting bug.
+The current version of Nosonos is `0.8.2`, a minor release that fixes another error reporting bug and type bug.
 
 **WARNING: NOSONOS IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
 
