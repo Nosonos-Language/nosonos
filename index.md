@@ -239,3 +239,26 @@ const hello: String = "Hello, "
 const world: String = "world!"
 put(hello <> world)
 ```
+
+Bubble Sort:
+```kotlin
+from random import shuffle
+
+fun sort(arr: List) :: List =
+  local changed = true
+  while changed:
+    changed = false
+    for i in range(len(arr) - 1):
+      if arr[i] > arr[i + 1]:
+        arr[i], arr[i + 1] = arr[i + 1], arr[i]
+        changed = true
+  ret arr
+
+var set = [1..20]
+shuffle(set)
+put("Shuffled:", set)
+put("Sorted:", sort(set))
+set = [0, -75, 15, -5, 128, -76, 2]
+put("Unsorted:", set)
+put("Sorted:", sort(set))
+```
