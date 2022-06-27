@@ -108,7 +108,6 @@ type
     ptuple,
     none,
     pany,
-    ignoretype,
     ilgl
 
 var
@@ -171,7 +170,6 @@ proc keyword(word: string): (Token, string) =
   of "Tuple": return (Token.ptuple, tok)
   of "None": return (Token.none, tok)
   of "Any": return (Token.pany, tok)
-  of "ignoreType": return (Token.ignoretype, tok)
   of "as": return (Token.kas, tok)
   of "var": return (Token.defvar, tok)
   of "local": return (Token.local, tok)

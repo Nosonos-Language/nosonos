@@ -139,7 +139,6 @@ proc compile*(tbl: seq[(Token, string)] = tokenTable): string =
       else:
         error("Line " & $line & ": Expected an atom after variable keyword.")
     of Token.decorate: output = output & "@"
-    of Token.ignoretype: output = output & " # type: ignore"
     of Token.pany: output = output & "any"
     of Token.plist: output = output & "list"
     of Token.pset: output = output & "set"
