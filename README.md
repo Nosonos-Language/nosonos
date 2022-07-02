@@ -1,3 +1,5 @@
+***Sorry for the lack of updates, but I've wanted to try to make something more serious... And functional...*** \*wink wink\*
+
 # Nosonos
 
 Welcome to **Nosonos**!
