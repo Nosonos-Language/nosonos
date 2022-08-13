@@ -2,7 +2,7 @@ The Nosonos programming language is a language that compiles down to Python, for
 
 Nosonos' syntax is inspired by [Kotlin](https://kotlinlang.org), [Rust](https://www.rust-lang.org), [Nim](https://nim-lang.org), and [Prowl](https://github.com/UberPyro/prowl).
 
-The current version is 0.8.2.
+The current version is 0.8.3.
 
 ## Supported Systems
 Linux and Windows.
@@ -77,13 +77,13 @@ loop:
 Quicksort:
 ```kotlin
 fun qs(arr: List) :: List =
-  local less: List = []
-  local pivotList: List = []
-  local more: List = []
+  var less: List = []
+  var pivotList: List = []
+  var more: List = []
   if len(arr) <= 1:
     ret arr
   else:
-    local pivot: List = arr[0]
+    var pivot: List = arr[0]
     for i in arr:
       if i < pivot:
         less.append(i)
@@ -107,33 +107,33 @@ put(b)
 Calculator:
 ```kotlin
 fun add() :: Int =
-  local a: Int = Int(input("[a]> "))
-  local b: Int = Int(input("[b]> "))
+  var a: Int = Int(input("[a]> "))
+  var b: Int = Int(input("[b]> "))
   ret a + b
 
 fun sub() :: Int =
-  local a: Int = Int(input("[a]> "))
-  local b: Int = Int(input("[b]> "))
+  var a: Int = Int(input("[a]> "))
+  var b: Int = Int(input("[b]> "))
   ret a - b
 
 fun mul() :: Int =
-  local a: Int = Int(input("[a]> "))
-  local b: Int = Int(input("[b]> "))
+  var a: Int = Int(input("[a]> "))
+  var b: Int = Int(input("[b]> "))
   ret a * b
 
 fun div() :: Float =
-  local a: Float = Float(input("[a]> "))
-  local b: Float = Float(input("[b]> "))
+  var a: Float = Float(input("[a]> "))
+  var b: Float = Float(input("[b]> "))
   ret a / b
 
 fun fdiv() :: Int =
-  local a: Int = Int(input("[a]> "))
-  local b: Int = Int(input("[b]> "))
+  var a: Int = Int(input("[a]> "))
+  var b: Int = Int(input("[b]> "))
   ret a >/ b
 
 fun mod() :: Int =
-  local a: Int = Int(input("[a]> "))
-  local b: Int = Int(input("[b]> "))
+  var a: Int = Int(input("[a]> "))
+  var b: Int = Int(input("[b]> "))
   ret a % b
 
 fun main() :: None =
@@ -145,7 +145,7 @@ fun main() :: None =
   put("fdiv")
   put("mod")
   loop:
-    local uin: String = input("> ")
+    var uin: String = input("> ")
     match uin:
       "add" -> put(add())
       "sub" -> put(sub())
@@ -245,7 +245,7 @@ Bubble Sort:
 from random import shuffle
 
 fun sort(arr: List) :: List =
-  local changed = true
+  var changed = true
   while changed:
     changed = false
     for i in range(len(arr) - 1):
