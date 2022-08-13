@@ -4,7 +4,21 @@
 
 Welcome to **Nosonos**!
 
-The current version of Nosonos is `0.8.2`, a minor release that fixes another error reporting bug and type bug.
+The current version of Nosonos is `0.8.3`, a minor release that fixes something annoying.
+
+**Hey! Here's a little note, I suggest you read it!**
+
+I'm dropping Nosonos.
+
+In programming language development you have these stages: *lexer -> parser -> codegen -> go time*
+
+But here's the issue, I skipped parsing entirely. I skipped directly to codegen. Nosonos works well for scripts but like Python, which Nosonos is majorly based on, has the same issues Python has. It is extremely difficult to actually get a project going with Nosonos.
+
+There may be updates ever so often, but don't count on it.
+
+Peace.
+
+~ Erin
 
 **WARNING: NOSONOS IS EXPERIMENTAL ON WINDOWS AND MAY NOT WORK RELIABLY**
 

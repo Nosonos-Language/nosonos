@@ -3,7 +3,7 @@ from random import shuffle
 // You can kill me for programming in
 // bubble sort, it's fine.
 fun sort(arr: List) :: List =
-  local changed = true
+  var changed = true
   while changed:
     changed = false
     for i in range(len(arr) - 1):

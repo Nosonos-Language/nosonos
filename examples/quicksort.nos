@@ -1,11 +1,11 @@
 fun qs(arr: List) :: List =
-  local less: List = []
-  local pivotList: List = []
-  local more: List = []
+  var less: List = []
+  var pivotList: List = []
+  var more: List = []
   if len(arr) <= 1:
     ret arr
   else:
-    local pivot: List = arr[0]
+    var pivot: List = arr[0]
     for i in arr:
       if i < pivot:
         less.append(i)
